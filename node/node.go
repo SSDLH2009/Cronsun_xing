@@ -3,12 +3,12 @@ package node
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/shunfei/cronsun/win"
 	"io/ioutil"
 	"os"
 	"path"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 
 	client "github.com/coreos/etcd/clientv3"
@@ -432,11 +432,18 @@ func (n *Node) groupRmNode(g, og *cronsun.Group) {
 }
 
 func (n *Node) KillExcutingProc(process *cronsun.Process) {
-	pid, _ := strconv.Atoi(process.ID)
-	if err := syscall.Kill(-pid, syscall.SIGKILL); err != nil {
-		log.Warnf("process:[%d] force kill failed, error:[%s]\n", pid, err)
+	//pid, _ := strconv.Atoi(process.ID)
+	//if err := syscall.Kill(-pid, syscall.SIGKILL); err != nil {
+	//	log.Warnf("process:[%d] force kill failed, error:[%s]\n", pid, err)
+	//	return
+	//}
+	//适应windows
+	pid, err := strconv.Atoi(process.ID)
+	if err != nil {
+		fmt.Println("获取任务进程异常", err)
 		return
 	}
+	win.KillProcTree(pid)
 }
 
 func (n *Node) watchJobs() {

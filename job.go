@@ -5,9 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"os/user"
+
+	//"errors"
 	"fmt"
 	"os/exec"
-	"os/user"
+	//"os/user"
 	"runtime"
 	"strconv"
 	"strings"
@@ -21,6 +24,7 @@ import (
 	"github.com/shunfei/cronsun/log"
 	"github.com/shunfei/cronsun/node/cron"
 	"github.com/shunfei/cronsun/utils"
+	//"golang.org/x/text/encoding/simplifiedchinese"
 )
 
 const (
@@ -733,7 +737,8 @@ func (j *Job) ShortName() string {
 
 func (j *Job) CreateCmdAttr() (*syscall.SysProcAttr, error) {
 	sysProcAttr := &syscall.SysProcAttr{
-		Setpgid: true,
+		// 适应windows
+		//Setpgid: true,
 	}
 
 	if len(j.User) == 0 {
@@ -751,12 +756,31 @@ func (j *Job) CreateCmdAttr() (*syscall.SysProcAttr, error) {
 	}
 
 	if uid != _Uid {
-		gid, _ := strconv.Atoi(u.Gid)
-		sysProcAttr.Credential = &syscall.Credential{
-			Uid: uint32(uid),
-			Gid: uint32(gid),
-		}
+		//适应windows
+		//gid, _ := strconv.Atoi(u.Gid)
+		//sysProcAttr.Credential = &syscall.Credential{
+		//	Uid: uint32(uid),
+		//	Gid: uint32(gid),
+		//}
 	}
 
 	return sysProcAttr, nil
 }
+
+
+
+//// 获取windows系统输出
+//func SysString(input *bytes.Buffer) (output string) {
+//	if runtime.GOOS == "windows" {
+//		data, err := simplifiedchinese.GBK.NewDecoder().Bytes(input.Bytes())
+//		if err != nil {
+//			log.Errorf("decode err: %v", err)
+//			output = input.String()
+//		} else {
+//			output = utils.Byte2String(data)
+//		}
+//	} else {
+//		output = input.String()
+//	}
+//	return
+//}
