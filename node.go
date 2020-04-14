@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"syscall"
 	"time"
 
 	client "github.com/coreos/etcd/clientv3"
@@ -74,7 +73,11 @@ func (n *Node) Exist() (pid int, err error) {
 	}
 
 	// TODO: 暂时不考虑 linux/unix 以外的系统
-	if p != nil && p.Signal(syscall.Signal(0)) == nil {
+	//if p != nil && p.Signal(syscall.Signal(0)) == nil {
+	//	return
+	//}
+	// 适应windows
+	if p != nil {
 		return
 	}
 
